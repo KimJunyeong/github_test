@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<style>
+	table{width: 600px ; height:auto; border: 5px inset green}
+	th,td{text-align:center; border:1px solid gray}
+</style>
+ <script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
+
+ <script type="text/javascript">
+ 	$(function(){
+ 		$("#send").click(function(){
+ 			$.ajax({
+ 				type:"post",		//전송방식 get? post?
+ 				url:"13-5.serverPageXML.jsp",	//서버주소
+ 				dataType:"xml",		//서버가 보내주는 데이터유형(text, html, xml, json)
+ 				//data: ,	//서버에게 보내는 파라미터. json이면 json형태, 각 데이터 유형에 맞춰서 보내자
+ 				success:function(result){
+ 					var str="";
+ 					$(result).find("member").each(function(index, item){
+ 						//alert(index+" = "+item+" , "+$(this)+" , "+$(this).find("name").text());
+ 						
+ 						
+ 						var name=$(this).find("name").text();
+ 						var age=$(this).find("age").text();
+ 						var addr=$(this).find("addr").text();
+ 						str+="<tr>";
+ 						str+="<td>"+name+"</td>";
+ 						str+="<td>"+age+"</td>";
+ 						str+="<td>"+addr+"</td>";
+ 						str+="</tr>";
+ 					})//반복문끝
+ 					
+ 					//기존데이터 지우기.
+ 					$("#table tr:gt(0)").remove();
+ 					
+ 					
+ 					$("#table").append(str);
+ 					
+ 				},	//성공했을 때 실행할 함수
+ 				error:function(err){
+ 					alert("오류발생 "+err);
+ 				}//오류났을 때 실행할 함수
+ 			});
+ 		});
+ 	});
+ </script>
+
+</head>
+<body>
+	<a href="#" id="send">데이터가져오기</a><p/>
+	
+  <table id="table">
+  	  <tr>
+  	  	<th>이름</th>
+		<th>나이</th>
+		<th>주소</th>
+  	  </tr>
+  </table>
+</body>
+</html>
+
+
+

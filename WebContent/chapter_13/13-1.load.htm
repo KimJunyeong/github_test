@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">	
+<head>
+	<meta  charset="UTF-8"/>
+    <title>load 메서드</title>
+	<style>
+		div{width:300px;height:200px;
+		    background-color:yellow; 
+		}
+		
+	</style>
+     <script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
+     <script>
+     	$(function(){
+     		$("#btn").click(function(){
+     			$("#display").load("13-1.serverPage.html"); //Ajax 쓸거야
+     		});
+     	})
+     </script>
+   
+</head>
+<body>
+	<h3>소스 13-1 $(selector).load(url , [params] , [callbackFun]) 함수 </h3>
+    <input type="button" id="btn" value="load함수 요청" />
+    <div id="display">요청결과 출력영역</div>
+</body>
+</html>
+
+
+
+
+
+
+
+

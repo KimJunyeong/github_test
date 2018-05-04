@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<style>
+ a{text-decoration: none}
+</style>
+ <script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
+ <script>
+ 	$(function(){
+ 		$("#keyWord").keyup(function(){
+ 			//이 때 Ajax 구현해야 함. 단, 입력값이 공백인 경우는 실행하면 안 됨.
+ 			if($(this).val()==""){
+ 				$("#suggest").hide();
+ 				return;
+ 			}
+ 			$.ajax({
+ 				type:"post",
+ 				url:"../suggestServlet",
+ 				data:"keyWord="+$(this).val(),
+ 				dataType:"text",
+ 				success:function(result){
+ 					var re = result.split("|"); //re[0]과 re[1]로 나누어짐
+ 					if(parseInt(re[0])>0){
+ 						var wordList=re[1].split(",");
+ 						var str="";
+ 						$.each(wordList, function(index, item){
+ 							str+="<a href='#'>"+item+"</a><br>";
+ 						});
+ 						//div 영역에 추가해야 함
+ 						$("#suggest").html(str);
+ 						$("#suggest").show();
+ 					}
+ 					else{//검색된 단어 없음
+ 						$("#suggest").hide();
+ 						return;
+ 					}
+ 						
+ 				},
+ 				error:function(err){
+ 					colsole.log("error : "+err);
+ 				}
+ 			});//ajax end
+ 		});//keyup end
+ 		
+ 		//a태그를 클릭했을 때 이벤트 처리
+ 		$("#suggest").on("click", "a", function(){		//$(document).on()도 가능
+ 			$("#keyWord").val($(this).text());
+ 			$("#suggest").hide();
+ 		});
+ 		
+ 	});//jquery end
+ </script>
+
+</head>
+<body>
+<h3> [ Suggest 기능 구현 ]</h3>	
+<form name="search" id="search">
+	<input type="text" name="keyWord" id="keyWord"/>
+	<input type="button" value="검색"/>	
+</form>
+<!--제시어 단어 출력부분 -->
+<div id="suggest" style="display:none"></div> <!-- effect, 제시어가 나중에 뜰거야 show hiding -->
+
+
+
+</body>
+</html>
+
+
+
+
+

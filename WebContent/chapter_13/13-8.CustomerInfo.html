@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<style>
+ .a{border:solid red 5px}
+ span{width:150px; color:red}
+ input{border:solid gray 1px}
+ table{width:100%}
+ th,td{border:1px gray solid; text-align:center;padding:3px}
+ h2{text-align:center}
+ 
+</style>
+
+<script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
+
+<script type="text/javascript">
+  $(function(){
+	  //전체 레코드 가져오기
+	  function selectAll(){		//여러 번 호출 가능함. 호출해야 실행 가능함.
+		  $("#listTable tr:gt(0)").remove();
+		  $.ajax({
+				type:"post",
+				url:"../selectAllServlet",
+				dataType:"json",
+				success:function(result){
+					
+					var str="";
+					$.each(result, function(index, item){
+						str+="<tr>";
+						str+="<td>"+(index+1)+"</td>";
+						str+="<td><a href='#'>"+item.id+"</a></td>";
+						str+="<td>"+item.name+"</td>";
+						str+="<td>"+item.age+"</td>";
+						str+="<td>"+item.phone+"</td>";
+						str+="<td>"+item.addr+"</td>";
+						str+="<td><input type='button' value='삭제' class='delete'/></td>";
+						str+="</tr>";
+					});
+					$("#listTable tr:eq(0)").after(str); //테이블 행 하나 추가
+					$("a").css("textDecoration", "none");
+				},
+				error:function(err){
+					console.log("error : "+err);
+				}
+			});//ajax end
+	  }//selectAll end
+	  
+	  $("#id").keyup(function(){
+		  if($(this).val()==""){
+			  $("span").text("중복결과여부");
+			  return;
+		  }
+		  $.ajax({
+				type:"post",
+				url:"../checkIDServlet",
+				dataType:"text",
+				data:"id="+$("#id").val(),
+				success:function(result){
+					$("#id + span").text(result); ////////////////////////////
+				},
+				error:function(err){
+					console.log("error : "+err);
+				}
+			});//ajax end
+	  });//keyup end
+	  
+	  //가입하기
+	  $("#btn").click(function(){
+		  if($(this).val()=="가입하기"){
+			  $.ajax({
+					type:"post",
+					url:"../insertServlet",
+					dataType:"text",	//결과가 0또는 1
+					data:$("#inForm").serialize(),
+					success:function(result){
+						if(result>0){
+							$("input[type=text]").val("");
+							selectAll();
+						}
+						else{
+							alert("가입 실패");
+						}
+					},
+					error:function(err){
+						console.log("error : "+err);
+					}
+				});//sign up ajax end
+	  		}
+		  	else{		//수정하기
+		  		$.ajax({
+					type:"post",
+					url:"../updateServlet",
+					dataType:"text",	//결과가 0또는 1
+					data:$("#inForm").serialize(),
+					success:function(result){
+						if(result>0){
+							$("input[type=text]").val("");
+							selectAll();
+							$("#btn").val("가입하기");
+							$("#id").removeAttr("readonly");
+						}
+						else{
+							alert("수정 실패");
+						}
+					},
+					error:function(err){
+						console.log("error : "+err);
+					}
+				});//update ajax end
+		  	}
+	  });//btn end
+	  
+	  $(document).on("click", ".delete",function(){
+		  $.ajax({
+				type:"post",
+				url:"../deleteServlet",
+				dataType:"text",	//결과가 0또는 1
+				data:"id="+$(this).parent().parent().find("td:nth-child(2)").text(),
+				success:function(result){
+					if(result>0){
+						alert("Goodbye World!");
+						selectAll();
+					}
+					else{
+						alert("삭제 실패");
+					}
+				},
+				error:function(err){
+					console.log("error : "+err);
+				}
+			});//ajax end
+	  });//delete button end
+	  
+	  $(document).on("click", "a", function(){
+		 $("#id").val($(this).text()).attr("readonly", "readonly"); 
+		 $("#name").val($(this).parent().parent().find("td:nth-child(3)").text());
+		 $("#age").val($(this).parent().parent().find("td:nth-child(4)").text());
+		 $("#tel").val($(this).parent().parent().find("td:nth-child(5)").text());
+		 $("#addr").val($(this).parent().parent().find("td:nth-child(6)").text());
+		 
+		 $("#btn").val("수정하기");
+	  });
+	  
+	  selectAll();		//처음 화면에 뿌려줌
+  });	//jQuery ready 끝
+
+</script>
+
+
+</head>
+<body>
+<h2>회원정보 입력 </h2>
+
+<form name="inForm" method="post" id="inForm">
+<table cellspacing="0">
+	<tr bgcolor="pink" >
+	    <th >아이디</th>
+		<th >이름</th>
+		<th  >나이</th>
+		<th  >전화번호</th>	
+		<th  >주소</th>
+	</tr>
+	<tr>
+	    <td style="text-align:left"><input type="text" size="8" name="id" id="id"> <span>중복결과여부</span></td>
+		<td><input type="text" size="8" name="name" id="name"></td>
+		<td><input type="text" size="4" name="age" id="age"></td>
+		<td><input type="text" size="12" name="tel" id="tel"></td>
+		<td><input type="text" size="30" name="addr" id="addr"></td>
+	</tr>
+	<tr>
+		<td colspan="5" align="center"> 
+			<input type="button" value="가입하기"  id="btn">
+		</td>
+	</tr>
+</table>
+<br>
+<hr color="red">
+
+<h2> 고객 리스트 !  </h2>
+<table  id="listTable" cellspacing="0">
+	<tr bgcolor="pink">
+	   <th>번호</th>
+	   <th>아이디</th>
+		<th>이름</th>
+		<th>나이</th>
+		<th>전화번호</th>	
+		<th>주소</th>
+		<th>삭제</th>
+	</tr>
+</table>
+
+
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Insert title here</title>
+<script src="../js/jquery-3.3.1.js"></script>
+<script src="../js/jquery.form.min.js"></script>
+<script>
+	$(function(){
+		/*
+		$("input[type=button]").on("click", function(){
+			
+			  $.ajax({
+					type:"post",
+					url:"../uploadServlet",
+					dataType:"text",
+					data:"id="+$("uploadForm").serialize(),
+					success:function(result){
+						alert(result);
+					},
+					error:function(err){
+						console.log("error : "+err);
+					}
+				});//ajax end
+				
+		});*/
+		$("input[type=button]").on("click", function(){
+			$("#uploadForm").ajaxForm({
+				type:"post",
+				url:"../uploadServlet",
+				dataType:"json",
+				success:function(result){
+					var str="";
+					$.each(result, function(index, item){
+						str+="작성자 : "+item.name+"<br>";
+						str+="제목 : "+item.subject+"<br>";
+						str+="파일이름 : "+item.fileName+"<br>";
+						str+="파일사이즈 : "+item.fileSize+"<br>";
+					});
+					$("div").html(str);
+				},
+				error:function(err){
+					console.log("error : "+err);
+				}
+			});	//ajaxForm end
+			$("#uploadForm").submit(); //전송
+		});
+	});
+</script>
+</head>
+<body>
+<h1>Ajax 업로드</h1>
+<form method="post" enctype="multipart/form-data" name="uploadForm" id="uploadForm">
+이름: <input type="text" name="name"/><p>
+제목: <input type="text" name="subject"/><p>
+파일첨부: <input type="file" name="file"/><p>
+<input type="button" value="업로드"/>
+</form>
+<hr>
+<div></div>
+</body>
+</html>

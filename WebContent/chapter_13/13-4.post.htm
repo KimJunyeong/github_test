@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>post() 메소드</title>		
+    <script type="text/javascript" src="../js/jquery-3.3.1.js"></script>
+    <script>
+    	$(function(){
+    		$("#book").change(function(){
+    			//Ajax 통신
+    			if(this.selectedIndex!=0){
+    				//--선택-- 옵션이 선택되지 않음. vale가 있음.
+    				$.post("../postServlet", "book="+$("#book").val(), function(data){
+        				$("#display").html("<img src='images/"+data+"'>");
+        			});
+    			}
+    			
+    		});
+    	});
+    </script>   
+</head>
+<body>
+    <h3> $.post(url [,data] [,success] [,dataType]) 함수 </h3>
+	
+   <form>
+   	교재 선택 : 
+	<select name="book" id="book">
+		<option>--선택 --</option>
+		<option value="0">spring</option>
+		<option value="1">Android</option>
+		<option value="2">jQuery</option>
+		<option value="3">javaScript</option>
+	</select>
+   </form>
+    <div id="display"></div>
+</body>
+</html>
